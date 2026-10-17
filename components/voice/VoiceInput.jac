@@ -139,12 +139,12 @@ def:pub VoiceInput(language: str, onTranscript: Callable[[str], None]) -> JsxEle
             <p role="status" className="text-xs leading-5">{voice_label(language, "checking")}</p>
         } elif mode == "local" or mode == "browser" {
             <p className="text-xs leading-5 text-muted-foreground">{voice_label(language, "local_notice" if mode == "local" else "browser_notice")}</p>
-            {if mode == "browser" {
+            if mode == "browser" {
                 <label className="flex items-start gap-2 text-xs leading-5">
                     <input type="checkbox" checked={consent} onChange={change_consent} disabled={phase != "idle"} className="mt-1" />
                     <span>{voice_label(language, "consent")}</span>
                 </label>
-            }}
+            }
             <div className="flex flex-wrap gap-2">
                 <Button type="button" variant="outline" onClick={start_microphone} disabled={phase != "idle" or (mode == "browser" and not consent) or has_transcript}>{voice_label(language, "start")}</Button>
                 <Button type="button" variant="outline" onClick={stop_microphone} disabled={phase == "idle" or phase == "stopping"}>{voice_label(language, "stop_recording")}</Button>
