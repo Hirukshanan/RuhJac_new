@@ -1,5 +1,8 @@
-sv import from ..services.careBridgeService { prepareHandover, confirmHandover, HandoverResult }
+import from ..services.careBridgeService { prepareHandover, confirmHandover, HandoverResult }
 import from ..lib.download { trigger_download }
+import from ..lib.languages { language_locale, voice_label }
+import from .voice.VoiceInput { VoiceInput }
+import from .voice.ResponseSpeech { ResponseSpeech }
 
 import from .ui.card { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import from .ui.button { Button }
@@ -24,7 +27,16 @@ def:pub CareBridgeWorkspace() -> JsxElement {
     has confirmed: bool = False;
     has status_message: str = "";
 
-    def change_language(e: ChangeEvent) { language = e.target.value; }
+    def change_language(e: ChangeEvent) {
+        language = e.target.value;
+        confirmed = False;
+        status_message = "";
+    }
+    def accept_transcript(text: str) {
+        concern = concern.rstrip() + " " + text if concern.strip() else text;
+        confirmed = False;
+        status_message = "";
+    }
     def change_area(e: ChangeEvent) { area = e.target.value; }
     def change_concern(e: ChangeEvent) { concern = e.target.value; confirmed = False; }
     def change_symptoms(e: ChangeEvent) { symptoms = e.target.value; confirmed = False; }
@@ -79,8 +91,8 @@ def:pub CareBridgeWorkspace() -> JsxElement {
                     <div className="flex size-10 items-center justify-center rounded-xl bg-primary text-lg font-semibold text-primary-foreground">C</div>
                     <div><p className="text-lg font-semibold tracking-tight">CareBridge</p><p className="text-xs text-muted-foreground">Colombo care navigation</p></div>
                 </div>
-                <label className="flex items-center gap-2 text-sm">Language
-                    <select aria-label="Language" value={language} onChange={change_language} className="h-9 rounded-md border border-input bg-background px-2 text-sm">
+                <label lang={language_locale(language)} className="flex flex-wrap items-center gap-2 text-sm">{voice_label(language, "language")}
+                    <select id="carebridge-language" aria-label={voice_label(language, "language")} value={language} onChange={change_language} className="h-9 rounded-md border border-input bg-background px-2 text-sm">
                         <option value="English">English</option><option value="Sinhala">සිංහල</option><option value="Tamil">தமிழ்</option>
                     </select>
                 </label>
@@ -103,8 +115,12 @@ def:pub CareBridgeWorkspace() -> JsxElement {
                     <Card className="shadow-sm">
                         <CardHeader><CardTitle>Tell us what is going on</CardTitle><CardDescription>Use your own words. We will not infer symptoms or diagnose.</CardDescription></CardHeader>
                         <CardContent className="flex flex-col gap-3">
+                            <p lang={language_locale(language)} className="text-sm leading-6">{voice_label(language, "prompt")}</p>
+                            <ResponseSpeech key={"prompt-" + language} language={language} text={voice_label(language, "prompt")} />
+                            <p lang={language_locale(language)} className="text-xs leading-5 text-muted-foreground">{voice_label(language, "scope")}</p>
                             <label htmlFor="concern" className="text-sm font-medium">What would you like help navigating?</label>
-                            <Textarea id="concern" value={concern} onChange={change_concern} placeholder="For example: I have had a headache since yesterday, and I would like help preparing to speak with a clinician." className="min-h-32 resize-y bg-background" />
+                            <Textarea id="concern" lang={language_locale(language)} value={concern} onChange={change_concern} placeholder="For example: I have had a headache since yesterday, and I would like help preparing to speak with a clinician." className="min-h-32 resize-y bg-background" />
+                            <VoiceInput key={language} language={language} onTranscript={accept_transcript} />
                             <p className="text-xs text-muted-foreground">Avoid entering identifying details you do not need for this demo.</p>
                         </CardContent>
                         <CardFooter className="flex flex-wrap gap-3"><Button onClick={prepare_story} disabled={len(concern.strip()) < 3}>Prepare my story</Button><span className="text-xs text-muted-foreground">No medical advice is generated.</span></CardFooter>
@@ -131,7 +147,12 @@ def:pub CareBridgeWorkspace() -> JsxElement {
                         </Card>
                     }}
                     {if error_message { <p role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{error_message}</p> }}
-                    {if status_message { <p role="status" className="text-sm text-muted-foreground">{status_message}</p> }}
+                    {if status_message {
+                        <div lang={language_locale(language)} className="flex flex-col gap-2">
+                            <p role="status" className="text-sm text-muted-foreground">{voice_label(language, "confirmed_reply")}</p>
+                            <ResponseSpeech key={"confirmation-" + language} language={language} text={voice_label(language, "confirmed_reply")} />
+                        </div>
+                    }}
                 </div>
 
                 <aside className="flex flex-col gap-6">
