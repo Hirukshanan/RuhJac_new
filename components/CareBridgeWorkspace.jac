@@ -22,7 +22,7 @@ def:pub CareBridgeWorkspace() -> JsxElement {
     has medicines: str = "Not provided";
     has questions: str = "What should I discuss with my clinician?";
     has result: bool = False;
-    has facility_cards: list[dict] = [];
+    has facility_cards: list[dict[str, any]] = [];
     has error_message: str = "";
     has confirmed: bool = False;
     has status_message: str = "";
@@ -54,7 +54,7 @@ def:pub CareBridgeWorkspace() -> JsxElement {
             error_message = "Please describe your concern in a few words.";
             return;
         }
-        facilities: list[dict] = [
+        facilities: list[dict[str, any]] = [
             {"name": "National Hospital of Sri Lanka", "category": "Teaching hospital (sample directory entry)", "address": "Regent Street, Colombo 10", "reason": "Sample central Colombo public hospital entry. Confirm services directly.", "map_url": "https://www.google.com/maps/search/?api=1&query=National+Hospital+of+Sri+Lanka", "telephone": "Not available"},
             {"name": "Lady Ridgeway Hospital for Children", "category": "Children's hospital (sample directory entry)", "address": "Dr Danister De Silva Mawatha, Colombo 08", "reason": "Sample directory entry for children's care. Confirm suitability directly.", "map_url": "https://www.google.com/maps/search/?api=1&query=Lady+Ridgeway+Hospital+Colombo", "telephone": "Not available"},
             {"name": "Colombo South Teaching Hospital", "category": "Teaching hospital (sample directory entry)", "address": "Kalubowila, Dehiwala-Mount Lavinia", "reason": "Sample facility in the wider Colombo area. Confirm location and services directly.", "map_url": "https://www.google.com/maps/search/?api=1&query=Colombo+South+Teaching+Hospital+Kalubowila", "telephone": "Not available"}

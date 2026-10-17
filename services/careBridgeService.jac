@@ -16,7 +16,7 @@ def:pub prepareHandover(concern: str, area: str, language: str) -> HandoverResul
     }
     safe_area = area.strip() if area.strip() else "Colombo";
     episode = CareEpisode(area=safe_area, language=language, temporary=True);
-    episode +>:ReportsDetail(label="User's own words"):+> PatientReportedDetail(label="User's own words", value=concern.strip());
+    episode +>:ReportsDetail:+> PatientReportedDetail(label="User's own words", value=concern.strip());
     source = InformationSource(
         title="World Health Organization: Health topics",
         url="https://www.who.int/health-topics",
@@ -30,7 +30,7 @@ def:pub prepareHandover(concern: str, area: str, language: str) -> HandoverResul
         CareFacility(name="Colombo South Teaching Hospital", category="Teaching hospital (sample directory entry)", address="Kalubowila, Dehiwala-Mount Lavinia", reason="Sample facility in the wider Colombo area. Confirm location and services directly.", map_url="https://www.google.com/maps/search/?api=1&query=Colombo+South+Teaching+Hospital+Kalubowila")
     ];
     for facility in facilities {
-        match_node = episode +>:MatchesFacility(reason=facility.reason, map_url=facility.map_url):+> FacilityMatch(reason=facility.reason, map_url=facility.map_url);
+        match_node = episode +>:MatchesFacility:+> FacilityMatch(reason=facility.reason, map_url=facility.map_url);
         match_node +>:MatchTarget:+> HealthcareFacility(name=facility.name, category=facility.category, address=facility.address, source="Sample demo entry; not verified against the government directory.");
     }
     return HandoverResult(story=StoryDraft(concern=concern.strip()), source=source, facilities=facilities, directory_is_sample=True, ai_status="AI extraction is not connected in this preview; your words are preserved without interpretation.");

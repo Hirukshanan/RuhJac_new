@@ -38,7 +38,7 @@ def:pub ResponseSpeech(language: str, text: str) -> JsxElement {
         }
         try {
             # Cancel any earlier reply. Never queue the whole conversation.
-            current = new(globalThis.SpeechSynthesisUtterance, text);
+            current: any = new(globalThis.SpeechSynthesisUtterance as any, text);
             current.lang = str(voice.lang);
             current.voice = voice;
             utterance.current = current;

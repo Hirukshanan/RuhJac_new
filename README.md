@@ -18,10 +18,10 @@ here when none of the other templates fit, and describe what you want to build.
 
 ```bash
 jac install
-jac start --dev
+jac run --dev
 ```
 
-Open <http://localhost:8000>.
+Open the app URL printed by Jac (usually <http://localhost:8003> in dev mode).
 
 ## Where to go next
 
